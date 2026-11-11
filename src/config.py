@@ -39,8 +39,8 @@ class Config:
     yf_symbol: str = "XAUUSD=X"        # yfinance fallback
     broker_offset: float = 0.0         # Exness price - feed price (USD). Calibrate කරන්න.
     stale_minutes: int = 25            # M5 last candle මේකට වඩා පරණ නම් market closed/stale
-    chart_candles: int = 120
-    csv_candles: int = 150
+    chart_candles: int = 170
+    csv_candles: int = 250
 
     # ---- Schedule ----
     tz: str = "Asia/Colombo"
