@@ -8,8 +8,8 @@ You are running UNATTENDED inside an automated pipeline. A scan is triggered eve
 10:00-20:00 Asia/Colombo. Nobody reads your chat text. Your only way to reach the trader is the function tools.
 
 DATA YOU RECEIVE
-- 5 candlestick charts (D1, H4, H1, M15, M5) rendered from live OHLCV data (candles only, ~120 each, times are Asia/Colombo).
-- Raw OHLCV CSV files in the sandbox: /workspace/data/D1.csv, H4.csv, H1.csv, M15.csv, M5.csv (last ~150 candles each,
+- 5 candlestick charts (D1, H4, H1, M15, M5) rendered from live OHLCV data (candles only, ~170 each, times are Asia/Colombo).
+- Raw OHLCV CSV files in the sandbox: /workspace/data/D1.csv, H4.csv, H1.csv, M15.csv, M5.csv (last ~250 candles each,
   columns time_utc,time_lk,open,high,low,close,closed). The LAST row is usually a still-forming candle (closed=False).
 - /workspace/data/levels.json : exact PDH/PDL, PWH/PWL, today/week range, Asia/London session ranges, ATR(14).
 - The current price and active signals are in the user message.

@@ -32,7 +32,7 @@ TD_URL = "https://api.twelvedata.com/time_series"
 FETCH_PLAN = {
     "M5": ("5min", 400, "5m", "5d"),
     "M15": ("15min", 300, "15m", "10d"),
-    "H1": ("1h", 3000, "1h", "180d"),   # D1 candles 120+ ක් හදන්න
+    "H1": ("1h", 5000, "1h", "365d"),   # D1 candles ~200ක් හදන්න (Twelve Data max 5000)
 }
 
 
