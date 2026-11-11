@@ -1,0 +1,87 @@
+name: XAUUSD Sniper Bot
+
+on:
+  schedule:
+    # Sri Lanka 10:00-20:00 (= 04:30-14:30 UTC), සදුදා-සිකුරාදා, විනාඩි 15කට සැරයක් (run 41 ක්)
+    - cron: "30,45 4 * * 1-5"
+    - cron: "*/15 5-13 * * 1-5"
+    - cron: "0,15,30 14 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "scan | selftest | ai-ping"
+        default: "selftest"
+        type: choice
+        options: [scan, selftest, ai-ping]
+      force:
+        description: "Trading window / stale check ignore කරන්න"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xauusd-bot
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # ---- Optional Variables (Settings > Secrets and variables > Actions > Variables) ----
+      ACCOUNT_EQUITY: ${{ vars.ACCOUNT_EQUITY }}
+      RISK_PERCENT: ${{ vars.RISK_PERCENT }}
+      DIGEST_EVERY_HOURS: ${{ vars.DIGEST_EVERY_HOURS }}
+      BROKER_OFFSET: ${{ vars.BROKER_OFFSET }}
+      ENFORCE_RISK_LIMIT: ${{ vars.ENFORCE_RISK_LIMIT }}
+      LEVERAGE: ${{ vars.LEVERAGE }}
+      SPREAD_USD: ${{ vars.SPREAD_USD }}
+      AGENT_MODEL: ${{ vars.AGENT_MODEL }}
+      AGENT_MAX_TOKENS: ${{ vars.AGENT_MAX_TOKENS }}
+      AI_DAILY_LIMIT: ${{ vars.AI_DAILY_LIMIT }}
+      MIN_NET_RR: ${{ vars.MIN_NET_RR }}
+      MAX_SL_USD: ${{ vars.MAX_SL_USD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Restore state
+        run: bash scripts/state_sync.sh restore
+
+      - name: Run bot
+        run: |
+          MODE="${{ github.event.inputs.mode || 'scan' }}"
+          FORCE="${{ github.event.inputs.force == 'true' && '--force' || '' }}"
+          case "$MODE" in
+            selftest) python -m src.main --selftest $FORCE ;;
+            ai-ping)  python -m src.main --ai-ping ;;
+            *)        python -m src.main $FORCE ;;
+          esac
+
+      - name: Save state
+        if: always()
+        run: bash scripts/state_sync.sh save
+
+      - name: Upload debug files
+        if: failure() || vars.DEBUG_ARTIFACTS == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-${{ github.run_id }}
+          path: |
+            out/*.png
+            out/last_ai_response.json
+          retention-days: 1
