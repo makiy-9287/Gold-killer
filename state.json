@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "signals": [],
+  "last_digest_ts": "2026-11-11T12:00:15.624460+00:00",
+  "last_scan_ts": "2026-11-13T12:53:23.161728+00:00",
+  "last_error_notice_ts": "2026-11-13T12:29:26.410424+00:00",
+  "ai_calls": {
+    "pacific_date": "2026-11-13",
+    "count": 2
+  }
+}
